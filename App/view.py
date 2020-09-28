@@ -38,7 +38,7 @@ operación seleccionada.
 # ___________________________________________________
 
 
-crimefile = 'crime-utf8.csv'
+accidentsfile = 'us_accidents_small.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -70,7 +70,13 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
-        print("\nCargando información de crimenes ....")
+        print("\nCargando información de accidentes ....")
+        controller.loadData(cont,accidentsfile)
+        print('Accidentes cargados: ' + str(controller.accisSize(cont)))
+        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
+        print('Menor Llave: ' + str(controller.minKey(cont)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont)))
 
     elif int(inputs[0]) == 3:
         print("\nBuscando crimenes en un rango de fechas: ")
