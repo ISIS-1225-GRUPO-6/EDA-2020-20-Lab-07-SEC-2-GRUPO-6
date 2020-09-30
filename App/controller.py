@@ -96,3 +96,11 @@ def maxKey(analyzer):
     La mayor llave del arbol
     """
     return model.maxKey(analyzer)
+
+def getAccisByRangeSev(analyzer, LaDate, severidad):
+    """
+    Retorna el total de crimenes de un tipo especifico en una
+    fecha determinada
+    """
+    LaDate = datetime.datetime.strptime(LaDate, '%Y-%m-%d')
+    return model.getAccisByRangeSev(analyzer, LaDate.date(), severidad)

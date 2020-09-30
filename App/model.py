@@ -140,6 +140,19 @@ def maxKey(analyzer):
     """
     return om.maxKey(analyzer['date'])
 
+def getAccisByRangeSev(analyzer, LaDate, severidad):
+    """
+    Para una fecha determinada, retorna el numero de accidentes
+    por severidad.
+    """
+    Adate = om.get(analyzer['date'], LaDate)
+    if Adate['key'] is not None:
+        Accismap = me.getValue(Adate)['severity']
+        numaccis = m.get(Accismap,severidad)
+        if numaccis is not None:
+            return m.size(me.getValue(numaccis)['lstsev'])
+        return 0
+
 # ==============================
 # Funciones de Comparacion
 # ==============================

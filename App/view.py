@@ -79,11 +79,15 @@ while True:
         print('Mayor Llave: ' + str(controller.maxKey(cont)))
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en un rango de fechas: ")
-
-
-    elif int(inputs[0]) == 4:
         print("\nRequerimiento No 1 del reto 3: ")
+        LaDate = input("Fecha (YYYY-MM-DD): ")
+        severidad= input ("Ingrese severidad: ")
+        numacci = controller.getAccisByRangeSev(cont, LaDate, severidad)
+        
+        print("\nTotal de accidentes por severidad en esa fecha: " +
+              str(numacci))
+    elif int(inputs[0]) == 4:
+        print("\nRequerimiento No 2 del reto 3: ")
 
     else:
         sys.exit(0)
