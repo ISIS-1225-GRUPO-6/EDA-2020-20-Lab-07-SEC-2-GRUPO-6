@@ -35,10 +35,27 @@ es decir contiene los modelos con los datos en memoria
 """
 def newAnalyzer():
     analyzer = { 'accidents': None,
-                'date' : None
+                'date' : None,
+                '2016': None,
+                '2017': None,
+                '2018': None,
+                '2019': None
                 }
     analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
+
     analyzer['date'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareDates)
+
+    analyzer['2016'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareDates)
+
+    analyzer['2017'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareDates)
+
+    analyzer['2018'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareDates)
+
+    analyzer['2019'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
     return analyzer
 # -----------------------------------------------------
@@ -47,65 +64,59 @@ def newAnalyzer():
 
 
 # Funciones para agregar informacion al catalogo
-def addAcci(analyzer, acci):
-    lt.addLast(analyzer['accidents'], acci)
-    updateDateIndex(analyzer['date'], acci)
+def addAccident(analyzer,accident):
+    dia = accident['Start_Time']
+    accidentDate = datetime.datetime.strptime(dia, '%Y-%m-%d %H:%M:%S')
+    accidentYear = str(accidentDate.year)
+    lt.addLast(analyzer['accidents'],accident)
+    uptadeAccidentInDate(analyzer[accidentYear],accident)
+    uptadeAccidentInDate(analyzer['date'],accident) 
     return analyzer
 
-def updateDateIndex(map, acci):
+def uptadeAccidentInDate(map,accident):
+    date = accident['Start_Time']
+    accidentDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+    entry = om.get(map, accidentDate.date())
 
-    occurreddate = acci['Start_Time']
-    accidate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
-    entry = om.get(map, accidate.date())
     if entry is None:
-        datentry = newDataEntry(acci)
-        om.put(map, accidate.date(), datentry)
+        date_entry = newDateEntry()
+        om.put(map ,accidentDate.date(), date_entry)  
     else:
-        datentry = me.getValue(entry)
-    addDate(datentry, acci)
+        date_entry = me.getValue(entry)
+    
+    addSeverityToDate(date_entry,accident)
     return map
 
-def newDataEntry(acci):
-    """
-    Crea una entrada en el indice por fechas, es decir en el arbol
-    binario.
-    """
-    entry = {'severity': None, 'lstacci': None}
-    entry['severity'] = m.newMap(numelements=3,
+def addSeverityToDate(dateEntry,accident):
+    
+    lt.addLast(dateEntry['accidents'],accident)
+    severity = accident['Severity']
+    entry = m.get(dateEntry['severities'], severity)
+
+    if entry is None:
+        severity_entry = newSeverityEntry(accident)
+        m.put(dateEntry['severities'] , severity, severity_entry)
+    else:
+        severity_entry = me.getValue(entry)
+        
+    lt.addLast(severity_entry['listBySeverity'],accident)
+    return dateEntry
+
+def newDateEntry():
+ 
+    entry = {'severities': None, 'Accidents': None}
+    entry['severities'] = m.newMap(numelements=15,
                                      maptype='PROBING',
                                      comparefunction=compareSeverities)
-    entry['lstacci'] = lt.newList('SINGLE_LINKED', compareDates)
+    entry['accidents'] = lt.newList('SINGLE_LINKED', compareDates)
     return entry
 
-def addDate(datentry, acci):
-    """
-    Actualiza un indice de tipo de crimenes.  Este indice tiene una lista
-    de crimenes y una tabla de hash cuya llave es el tipo de crimen y
-    el valor es una lista con los crimenes de dicho tipo en la fecha que
-    se está consultando (dada por el nodo del arbol)
-    """
-    lst = datentry['lstacci']
-    lt.addLast(lst, acci)
-    sevIndex = datentry['severity']
-    seventry = m.get(sevIndex, acci['Severity'])
-    if (seventry is None):
-        entry = newSevEntry(acci['Severity'], acci)
-        lt.addLast(entry['lstsev'], acci)
-        m.put(sevIndex, acci['Severity'], entry)
-    else:
-        entry = me.getValue(seventry)
-        lt.addLast(entry['lstsev'], acci)
-    return datentry
-
-def newSevEntry(sevgroup, acci):#Esta crea severidad y una lista de severidades(?)
-    """
-    Crea una entrada en el indice por tipo de crimen, es decir en
-    la tabla de hash, que se encuentra en cada nodo del arbol.
-    """
-    sventry = {'seve': None, 'lstsev': None}
-    sventry['seve'] = sevgroup
-    sventry['lstsev'] = lt.newList('SINGLELINKED', compareSeverities)
-    return sventry
+def newSeverityEntry(accident):
+  
+    severity_entry = {'severity': None, 'listBySeverity': None}
+    severity_entry['severity'] = accident['Severity']
+    severity_entry['listBySeverity'] = lt.newList('SINGLE_LINKED', compareSeverities)
+    return severity_entry
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -116,41 +127,33 @@ def accisSize(analyzer):
     """
     return lt.size(analyzer['accidents'])
 
-
 def indexHeight(analyzer):
-    """Numero de autores leido
-    """
     return om.height(analyzer['date'])
 
-
 def indexSize(analyzer):
-    """Numero de autores leido
-    """
     return om.size(analyzer['date'])
 
-
 def minKey(analyzer):
-    """Numero de autores leido
-    """
     return om.minKey(analyzer['date'])
-
 
 def maxKey(analyzer):
     """Numero de autores leido
     """
     return om.maxKey(analyzer['date'])
 
-def getAccisByRangeSev(analyzer, LaDate, severidad):
+def getAccidentsByDate(analyzer, day, severity):
     """
     Para una fecha determinada, retorna el numero de accidentes
     por severidad.
     """
-    Adate = om.get(analyzer['date'], LaDate)
-    if Adate['key'] is not None:
-        Accismap = me.getValue(Adate)['severity']
-        numaccis = m.get(Accismap,severidad)
-        if numaccis is not None:
-            return m.size(me.getValue(numaccis)['lstsev'])
+    aDate = om.get(analyzer['date'], day)
+    if aDate['key'] is not None:
+        Accismap = me.getValue(aDate)['severities']
+        numaccis = m.get(Accismap,severity)
+        lista= numaccis['value']
+        cuantas = lt.size(lista['listBySeverity'])
+        if lista is not None:
+            return cuantas
         return 0
 
 # ==============================
@@ -166,7 +169,6 @@ def compareIds(id1, id2):
         return 1
     else:
         return -1
-
 
 def compareDates(date1, date2):
     """

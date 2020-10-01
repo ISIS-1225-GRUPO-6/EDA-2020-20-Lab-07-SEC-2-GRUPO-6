@@ -57,7 +57,7 @@ def loadData(analyzer, accidentsfile):
     input_file = csv.DictReader(open(accidentsfile, encoding="utf-8"),
                                 delimiter=",")
     for acci in input_file:
-        model.addAcci(analyzer, acci)
+        model.addAccident(analyzer, acci)
     return analyzer
 
 # ___________________________________________________
@@ -102,5 +102,5 @@ def getAccisByRangeSev(analyzer, LaDate, severidad):
     Retorna el total de crimenes de un tipo especifico en una
     fecha determinada
     """
-    LaDate = datetime.datetime.strptime(LaDate, '%Y-%m-%d')
-    return model.getAccisByRangeSev(analyzer, LaDate.date(), severidad)
+    dia = datetime.datetime.strptime(LaDate, '%Y-%m-%d')
+    return model.getAccidentsByDate(analyzer, dia.date(), severidad)

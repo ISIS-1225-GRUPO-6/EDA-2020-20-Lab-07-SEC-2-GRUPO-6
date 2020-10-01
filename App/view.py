@@ -25,7 +25,6 @@ import config
 from DISClib.ADT import list as lt
 from App import controller
 assert config
-
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones  y  por cada seleccion
@@ -68,6 +67,7 @@ while True:
         print("\nInicializando....")
         # cont es el controlador que se usará de acá en adelante
         cont = controller.init()
+        print("\nInicializado....")
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de accidentes ....")
