@@ -24,6 +24,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
+from DISClib.DataStructures import listiterator as it
 import datetime
 assert config
 
@@ -142,7 +143,7 @@ def maxKey(analyzer):
     """
     return om.maxKey(analyzer['date'])
 
-def getAccidentsByDate(analyzer, day, severity):
+def getAccidentsByDate(analyzer, day):
     """
     Para una fecha determinada, retorna el numero de accidentes
     por severidad.
@@ -150,11 +151,15 @@ def getAccidentsByDate(analyzer, day, severity):
     aDate = om.get(analyzer['date'], day)
     if aDate['key'] is not None:
         Accismap = me.getValue(aDate)['severities']
-        numaccis = m.get(Accismap,severity)
-        lista= numaccis['value']
-        cuantas = lt.size(lista['listBySeverity'])
-        if lista is not None:
-            return cuantas
+        sev=m.keySet(Accismap)
+        iterator= it.newIterator(sev)
+        while(it.hasNext(iterator)):
+            severity1= it.next(iterator)
+            numaccis = m.get(Accismap,severity1)
+            lista= numaccis['value']
+            cuantas = lt.size(lista['listBySeverity'])
+            if lista is not None:
+                print("severidad: "+ str(severity1) + " tiene : " +str(cuantas) +" accidentes")
     return 0
 # ==============================
 # Funciones de Comparacion

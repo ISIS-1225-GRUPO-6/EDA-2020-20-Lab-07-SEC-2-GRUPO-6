@@ -97,10 +97,10 @@ def maxKey(analyzer):
     """
     return model.maxKey(analyzer)
 
-def getAccisByRangeSev(analyzer, LaDate, severidad):
+def getAccisByRangeSev(analyzer, LaDate):
     """
     Retorna el total de crimenes de un tipo especifico en una
     fecha determinada
     """
     dia = datetime.datetime.strptime(LaDate, '%Y-%m-%d')
-    return model.getAccidentsByDate(analyzer, dia.date(), severidad)
+    return model.getAccidentsByDate(analyzer, dia.date())
