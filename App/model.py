@@ -84,6 +84,7 @@ def uptadeAccidentInDate(map,accident):
     else:
         date_entry = me.getValue(entry)
     
+    lt.addLast(date_entry['accidents'], accident)
     addSeverityToDate(date_entry,accident)
     return map
 
@@ -154,8 +155,7 @@ def getAccidentsByDate(analyzer, day, severity):
         cuantas = lt.size(lista['listBySeverity'])
         if lista is not None:
             return cuantas
-        return 0
-
+    return 0
 # ==============================
 # Funciones de Comparacion
 # ==============================
