@@ -103,4 +103,4 @@ def getAccisByRangeSev(analyzer, LaDate):
     fecha determinada
     """
     dia = datetime.datetime.strptime(LaDate, '%Y-%m-%d')
-    return model.getAccidentsByDate(analyzer, dia.date())
+    model.getAccidentsByDate(analyzer, dia.date())

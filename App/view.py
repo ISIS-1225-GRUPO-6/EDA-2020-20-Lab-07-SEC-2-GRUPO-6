@@ -81,7 +81,7 @@ while True:
     elif int(inputs[0]) == 3:
         print("\nRequerimiento No 1 del reto 3: ")
         LaDate = input("Fecha (YYYY-MM-DD): ")
-        numacci = controller.getAccisByRangeSev(cont, LaDate)
+        controller.getAccisByRangeSev(cont, LaDate)
         
     elif int(inputs[0]) == 4:
         print("\nRequerimiento No 2 del reto 3: ")

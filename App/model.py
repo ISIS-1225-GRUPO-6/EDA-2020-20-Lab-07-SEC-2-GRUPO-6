@@ -153,14 +153,16 @@ def getAccidentsByDate(analyzer, day):
         Accismap = me.getValue(aDate)['severities']
         sev=m.keySet(Accismap)
         iterator= it.newIterator(sev)
+        totales=0
         while(it.hasNext(iterator)):
             severity1= it.next(iterator)
             numaccis = m.get(Accismap,severity1)
             lista= numaccis['value']
             cuantas = lt.size(lista['listBySeverity'])
+            totales+=cuantas
             if lista is not None:
                 print("severidad: "+ str(severity1) + " tiene : " +str(cuantas) +" accidentes")
-    return 0
+        print("accidentes totales: "+str(totales))
 # ==============================
 # Funciones de Comparacion
 # ==============================
