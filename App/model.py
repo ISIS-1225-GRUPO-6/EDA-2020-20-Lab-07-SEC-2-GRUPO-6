@@ -40,7 +40,8 @@ def newAnalyzer():
                 '2016': None,
                 '2017': None,
                 '2018': None,
-                '2019': None
+                '2019': None,
+                '2020':None
                 }
     analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
 
@@ -57,6 +58,9 @@ def newAnalyzer():
                                       comparefunction=compareDates)
 
     analyzer['2019'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareDates)
+    
+    analyzer['2020'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
     return analyzer
 # -----------------------------------------------------
