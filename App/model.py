@@ -186,9 +186,13 @@ def compareDates(date1, date2):
     Compara dos ids de libros, id es un identificador
     y entry una pareja llave-valor
     """
-    if (date1 == date2):
+    accidentDate1 = datetime.datetime.strptime(date1, '%Y-%m-%d %H:%M:%S')
+    accidentDate2 = datetime.datetime.strptime(date2, '%Y-%m-%d %H:%M:%S')
+    day1 = accidentDate1.day
+    day2 = accidentDate2.day
+    if (day1 == day2):
         return 0
-    elif (date1 > date2):
+    elif (day1 > day2):
         return 1
     else:
         return -1
