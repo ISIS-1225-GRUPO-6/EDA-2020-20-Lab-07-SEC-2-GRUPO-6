@@ -94,7 +94,6 @@ def uptadeAccidentInDate(map,accident):
 
 def addSeverityToDate(dateEntry,accident):
     
-    lt.addLast(dateEntry['accidents'],accident)
     severity = accident['Severity']
     entry = m.get(dateEntry['severities'], severity)
 
@@ -151,7 +150,7 @@ def getAccidentsByDate(analyzer, day):
     Para una fecha determinada, retorna el numero de accidentes
     por severidad.
     """
-    aDate = om.get(analyzer['date'], day)
+    aDate = om.get(analyzer[str(day.year)], day)
     if aDate['key'] is not None:
         Accismap = me.getValue(aDate)['severities']
         sev=m.keySet(Accismap)
@@ -181,9 +180,12 @@ def compareIds(id1, id2):
         return -1
 
 def compareDates(date1, date2):
+    
+    date1= datetime.datetime.date(date1)
+    date2= datetime.datetime.date(date2)
     if (date1 == date2):
         return 0
-    elif (day1 > day2):
+    elif (date1 > date2):
         return 1
     else: 
         return -1
