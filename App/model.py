@@ -194,7 +194,7 @@ def compareDates(date1, date2):
         return 0
     elif (day1 > day2):
         return 1
-    else:
+    else: 
         return -1
 
 def compareSeverities(Sev1, Sev2):
