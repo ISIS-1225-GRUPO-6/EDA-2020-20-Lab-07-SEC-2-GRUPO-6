@@ -165,6 +165,24 @@ def getAccidentsByDate(analyzer, day):
             if lista is not None:
                 print("severidad: "+ str(severity1) + " tiene : " +str(cuantas) +" accidentes")
         print("accidentes totales: "+str(totales))
+
+def getAccidentsLast(analyzer, day):
+    aDate = om.keys(analyzer['date'],om.minKey(analyzer['date']),day)
+    iterator= it.newIterator(aDate)
+    cuantos=0
+    diaMayor=""
+    cuantosMayor=0
+    while (it.hasNext(iterator)):
+        info= it.next(iterator)
+        print(info)
+        accidentDate = datetime.datetime.strptime(info['key'], '%Y-%m-%d')
+        if (accidentDate<day):
+            cuantos += lt.size(info['value']['accidents'])
+            if(lt.size(info['value']['accidents'])>cuantosMayor):
+                cuantosMayor=lt.size(info['value']['accidents'])
+                diaMayor=info['key']
+        
+    print("accidentes totales: "+str(cuantos)+", la fecha con mayor accidentes es : "+diaMayor)
 # ==============================
 # Funciones de Comparacion
 # ==============================
@@ -180,9 +198,7 @@ def compareIds(id1, id2):
         return -1
 
 def compareDates(date1, date2):
-    
-    date1= datetime.datetime.date(date1)
-    date2= datetime.datetime.date(date2)
+
     if (date1 == date2):
         return 0
     elif (date1 > date2):

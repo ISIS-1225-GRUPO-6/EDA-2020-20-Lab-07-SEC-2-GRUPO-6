@@ -104,3 +104,7 @@ def getAccisByRangeSev(analyzer, LaDate):
     """
     dia = datetime.datetime.strptime(LaDate, '%Y-%m-%d')
     model.getAccidentsByDate(analyzer, dia.date())
+
+def getAccidentsLess(analyzer, day):
+    dia = datetime.datetime.strptime(day, '%Y-%m-%d')
+    model.getAccidentsLast(analyzer, dia.date())
