@@ -59,10 +59,6 @@ def newAnalyzer():
 
     analyzer['2019'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
-<<<<<<< HEAD
-=======
-    
->>>>>>> master
     analyzer['2020'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
     return analyzer
@@ -185,19 +181,7 @@ def compareIds(id1, id2):
         return -1
 
 def compareDates(date1, date2):
-<<<<<<< HEAD
     if (date1 == date2):
-=======
-    """
-    Compara dos ids de libros, id es un identificador
-    y entry una pareja llave-valor
-    """
-    accidentDate1 = datetime.datetime.strptime(date1, '%Y-%m-%d %H:%M:%S')
-    accidentDate2 = datetime.datetime.strptime(date2, '%Y-%m-%d %H:%M:%S')
-    day1 = accidentDate1.day
-    day2 = accidentDate2.day
-    if (day1 == day2):
->>>>>>> master
         return 0
     elif (day1 > day2):
         return 1
