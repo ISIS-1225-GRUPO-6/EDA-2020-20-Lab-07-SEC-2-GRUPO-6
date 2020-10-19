@@ -108,7 +108,7 @@ def addSeverityToDate(dateEntry,accident):
 
 def newDateEntry():
  
-    entry = {'severities': None, 'Accidents': None}
+    entry = {'severities': None, 'accidents': None}
     entry['severities'] = m.newMap(numelements=15,
                                      maptype='PROBING',
                                      comparefunction=compareSeverities)
@@ -167,22 +167,22 @@ def getAccidentsByDate(analyzer, day):
         print("accidentes totales: "+str(totales))
 
 def getAccidentsLast(analyzer, day):
+    
     aDate = om.keys(analyzer['date'],om.minKey(analyzer['date']),day)
     iterator= it.newIterator(aDate)
     cuantos=0
-    diaMayor=""
+    diaMayor=None
     cuantosMayor=0
     while (it.hasNext(iterator)):
         info= it.next(iterator)
-        print(info)
-        accidentDate = datetime.datetime.strptime(info['key'], '%Y-%m-%d')
-        if (accidentDate<day):
-            cuantos += lt.size(info['value']['accidents'])
-            if(lt.size(info['value']['accidents'])>cuantosMayor):
-                cuantosMayor=lt.size(info['value']['accidents'])
-                diaMayor=info['key']
-        
-    print("accidentes totales: "+str(cuantos)+", la fecha con mayor accidentes es : "+diaMayor)
+        valor = om.get(analyzer['date'],info)['value']
+        cuantos += lt.size(valor['accidents'])
+        if(lt.size(valor['accidents'])>cuantosMayor):
+            cuantosMayor=lt.size(valor['accidents'])
+            diaMayor=info
+    print("accidentes totales: "+str(cuantos)+", la fecha con mayor accidentes es : "+str(diaMayor))
+
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
