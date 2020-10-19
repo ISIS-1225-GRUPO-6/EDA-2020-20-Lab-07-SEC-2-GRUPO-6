@@ -90,7 +90,6 @@ def minKey(analyzer):
     """
     return model.minKey(analyzer)
 
-
 def maxKey(analyzer):
     """
     La mayor llave del arbol
@@ -108,3 +107,8 @@ def getAccisByRangeSev(analyzer, LaDate):
 def getAccidentsLess(analyzer, day):
     dia = datetime.datetime.strptime(day, '%Y-%m-%d')
     model.getAccidentsLast(analyzer, dia.date())
+
+def getAccidentsState(analyzer, dayin, dayend):
+    diain = datetime.datetime.strptime(dayin, '%Y-%m-%d')
+    diaend = datetime.datetime.strptime(dayend, '%Y-%m-%d')
+    model.getAccidentsState(analyzer, diain.date(),diaend.date())

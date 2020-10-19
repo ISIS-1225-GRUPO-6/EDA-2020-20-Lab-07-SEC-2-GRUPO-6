@@ -53,6 +53,8 @@ def printMenu():
     print("2- Cargar información de accidentes")
     print("3- Requerimento 1")
     print("4- Requerimento 2")
+    print("5- Requerimento 3")
+    print("6- Requerimento 4")
     print("0- Salir")
     print("*******************************************")
 
@@ -91,6 +93,16 @@ while True:
         print("\nRequerimiento No 2 del reto 3: ")
         LaDate = input("Fecha (YYYY-MM-DD): ")
         controller.getAccidentsLess(cont, LaDate)
+
+    elif int(inputs[0]) == 5:
+        print("\nRequerimiento No 3 del reto 3: ")
+        LaDate = input("Fecha (YYYY-MM-DD): ")
+        
+    elif int(inputs[0]) == 6:
+        print("\nRequerimiento No 4 del reto 3: ")
+        LaDate = input("Fecha inicio (YYYY-MM-DD): ")
+        LaDate1 = input("Fecha final (YYYY-MM-DD): ")
+        controller.getAccidentsState( cont , LaDate, LaDate1)
 
     else:
         sys.exit(0)

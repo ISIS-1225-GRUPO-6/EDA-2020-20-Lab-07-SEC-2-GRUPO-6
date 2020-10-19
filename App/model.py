@@ -89,31 +89,64 @@ def uptadeAccidentInDate(map,accident):
         date_entry = me.getValue(entry)
     
     lt.addLast(date_entry['accidents'], accident)
-    addSeverityToDate(date_entry,accident)
+    addSeverityToDate(date_entry['severities'],accident)
+    addStateToDate(date_entry['state'],accident)
     return map
 
 def addSeverityToDate(dateEntry,accident):
     
     severity = accident['Severity']
-    entry = m.get(dateEntry['severities'], severity)
+    entry = m.get(dateEntry, severity)
 
     if entry is None:
         severity_entry = newSeverityEntry(accident)
-        m.put(dateEntry['severities'] , severity, severity_entry)
+        m.put(dateEntry , severity, severity_entry)
     else:
         severity_entry = me.getValue(entry)
         
     lt.addLast(severity_entry['listBySeverity'],accident)
     return dateEntry
 
+def addStateToDate(dateEntry,accident):
+    
+    state = accident['State']
+    entry = m.get(dateEntry, state)
+
+    if entry is None:
+        state_entry = newState(accident)
+        m.put(dateEntry , state, state_entry)
+    else:
+        state_entry = me.getValue(entry)
+        
+    lt.addLast(state_entry['listByState'],accident)
+    return dateEntry
+
 def newDateEntry():
  
-    entry = {'severities': None, 'accidents': None}
+    entry = {'severities': None, 'accidents': None, 'categories': None, 'state':None}
     entry['severities'] = m.newMap(numelements=15,
                                      maptype='PROBING',
                                      comparefunction=compareSeverities)
+    entry['categories'] = m.newMap(numelements=15, maptype='PROBING',comparefunction=comparecategories)
+   
+    entry['state'] = m.newMap(numelements=15, maptype='PROBING',comparefunction=comparestates)
+
     entry['accidents'] = lt.newList('SINGLE_LINKED', compareDates)
     return entry
+
+def newCategory(accident):
+  
+    category_entry = {'category': None, 'listByCategory': None}
+    category_entry['category'] = accident['']
+    category_entry['listByCategory'] = lt.newList('SINGLE_LINKED', comparecategories)
+    return category_entry
+
+def newState(accident):
+  
+    state_entry = {'state': None, 'listByState': None}
+    state_entry['state'] = accident['State']
+    state_entry['listByState'] = lt.newList('SINGLE_LINKED', comparestates)
+    return state_entry
 
 def newSeverityEntry(accident):
   
@@ -126,9 +159,6 @@ def newSeverityEntry(accident):
 # ==============================
 
 def accisSize(analyzer):
-    """
-    Número de libros en el catago
-    """
     return lt.size(analyzer['accidents'])
 
 def indexHeight(analyzer):
@@ -141,8 +171,6 @@ def minKey(analyzer):
     return om.minKey(analyzer['date'])
 
 def maxKey(analyzer):
-    """Numero de autores leido
-    """
     return om.maxKey(analyzer['date'])
 
 def getAccidentsByDate(analyzer, day):
@@ -182,7 +210,43 @@ def getAccidentsLast(analyzer, day):
             diaMayor=info
     print("accidentes totales: "+str(cuantos)+", la fecha con mayor accidentes es : "+str(diaMayor))
 
+def getAccidentsState(analyzer, dayin, dayend):
+    
+    aDate = om.keys(analyzer['date'],dayin,dayend)
+    iterator= it.newIterator(aDate)
+    cuantos=0
+    diaMayor=None
+    cuantosMayor=0
+    while (it.hasNext(iterator)):
+        info= it.next(iterator)
+        valor = om.get(analyzer['date'],info)['value']
+        cuantos += lt.size(valor['accidents'])
+        llaves = m.keySet(valor['state'])
+        iterator1= it.newIterator(llaves)
+        while(it.hasNext(iterator1)):
+            info1= it.next(iterator1)
+            val = m.get(valor['state'], info1)['value']['listByState']
+            if(lt.size(val)>cuantosMayor):
+                cuantosMayor=lt.size(val)
+                diaMayor=info1
+    print("accidentes totales: "+str(cuantos)+", el estado con mayor accidentes es : "+str(diaMayor))
 
+def getAccidentsCategory(analyzer, dayin, dayend):
+    
+    aDate = om.keys(analyzer['date'],dayin,dayend)
+    iterator= it.newIterator(aDate)
+    cuantos=0
+    diaMayor=None
+    cuantosMayor=0
+    
+    while (it.hasNext(iterator)):
+        info= it.next(iterator)
+        valor = om.get(analyzer['date'],info)['value']
+        cuantos += lt.size(valor['accidents'])
+        if(lt.size(valor['accidents'])>cuantosMayor):
+            cuantosMayor=lt.size(valor['accidents'])
+            diaMayor=info
+    print("accidentes totales: "+str(cuantos)+", la fecha con mayor accidentes es : "+str(diaMayor))
 # ==============================
 # Funciones de Comparacion
 # ==============================
@@ -207,14 +271,25 @@ def compareDates(date1, date2):
         return -1
 
 def compareSeverities(Sev1, Sev2):
-    """
-    Compara dos ids de libros, id es un identificador
-    y entry una pareja llave-valor
-    """
-    Sev = me.getKey(Sev2)
-    if (Sev1 == Sev):
+    if (Sev1 == Sev2):
         return 0
-    elif (Sev1 > Sev):
+    elif (Sev1 > Sev2) :
+        return 1
+    else:
+        return -1
+
+def comparecategories(cat1, cat2):
+    if (cat1 == cat2):
+        return 0
+    elif (cat1 > cat2):
+        return 1
+    else:
+        return -1
+
+def comparestates(state1, state2):
+    if (state1 == state2):
+        return 0
+    elif (state1 > state2) :
         return 1
     else:
         return -1
