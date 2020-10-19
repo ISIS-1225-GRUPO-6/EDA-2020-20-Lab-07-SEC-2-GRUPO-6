@@ -58,6 +58,8 @@ def newAnalyzer():
 
     analyzer['2019'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
+    analyzer['2020'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareDates)
     return analyzer
 # -----------------------------------------------------
 # API del TAD Catalogo de accidentes
@@ -178,10 +180,6 @@ def compareIds(id1, id2):
         return -1
 
 def compareDates(date1, date2):
-    """
-    Compara dos ids de libros, id es un identificador
-    y entry una pareja llave-valor
-    """
     if (date1 == date2):
         return 0
     elif (date1 > date2):
