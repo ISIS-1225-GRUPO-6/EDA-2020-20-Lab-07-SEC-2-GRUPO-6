@@ -112,3 +112,13 @@ def getAccidentsState(analyzer, dayin, dayend):
     diain = datetime.datetime.strptime(dayin, '%Y-%m-%d')
     diaend = datetime.datetime.strptime(dayend, '%Y-%m-%d')
     model.getAccidentsState(analyzer, diain.date(),diaend.date())
+
+def getAccidentsCategory(analyzer, dayin, dayend):
+    diain = datetime.datetime.strptime(dayin, '%Y-%m-%d')
+    diaend = datetime.datetime.strptime(dayend, '%Y-%m-%d')
+    model.getAccidentsCategory(analyzer, diain.date(),diaend.date())
+
+def getAccidentsHour(analyzer, dayin, dayend):
+    diain = datetime.datetime.strptime(dayin, '%H:%M')
+    diaend = datetime.datetime.strptime(dayend, '%H:%M')
+    model.getAccidentsHour(analyzer, str(diain.time()),str(diaend.time()))

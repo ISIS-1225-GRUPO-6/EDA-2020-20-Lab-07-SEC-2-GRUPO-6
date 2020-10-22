@@ -25,6 +25,7 @@ from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
 from DISClib.DataStructures import listiterator as it
+from math import radians, cos, sin, asin, sqrt
 import datetime
 assert config
 
@@ -37,30 +38,14 @@ es decir contiene los modelos con los datos en memoria
 def newAnalyzer():
     analyzer = { 'accidents': None,
                 'date' : None,
-                '2016': None,
-                '2017': None,
-                '2018': None,
-                '2019': None,
-                '2020':None
+                'hour', None
                 }
     analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
 
     analyzer['date'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
-
-    analyzer['2016'] = om.newMap(omaptype='RBT',
-                                      comparefunction=compareDates)
-
-    analyzer['2017'] = om.newMap(omaptype='RBT',
-                                      comparefunction=compareDates)
-
-    analyzer['2018'] = om.newMap(omaptype='RBT',
-                                      comparefunction=compareDates)
-
-    analyzer['2019'] = om.newMap(omaptype='RBT',
-                                      comparefunction=compareDates)
-    analyzer['2020'] = om.newMap(omaptype='RBT',
-                                      comparefunction=compareDates)
+    analyzer['hour'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareHours)
     return analyzer
 # -----------------------------------------------------
 # API del TAD Catalogo de accidentes
@@ -73,9 +58,31 @@ def addAccident(analyzer,accident):
     accidentDate = datetime.datetime.strptime(dia, '%Y-%m-%d %H:%M:%S')
     accidentYear = str(accidentDate.year)
     lt.addLast(analyzer['accidents'],accident)
-    uptadeAccidentInDate(analyzer[accidentYear],accident)
-    uptadeAccidentInDate(analyzer['date'],accident) 
+    uptadeAccidentInDate(analyzer['date'], accident) 
+    uptadeAccidentInHour(analyzer['hour'], accident)
     return analyzer
+
+def uptadeAccidentInHour(map,accident):
+    date = accident['Start_Time']
+    accidentDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+    formato=":"
+    if accidentDate.minute>=30:
+        formato=str(accidentDate.hour)+":30"
+    elif accidentDate.minute<30:
+        formato=str(accidentDate.hour)+":00"
+   
+    entry = om.get(map, formato)
+
+    if entry is None:
+        hour_entry = newHourEntry()
+        om.put(map ,formato, hour_entry)  
+    else:
+        hour_entry = me.getValue(entry)
+    
+    lt.addLast(hour_entry['accidents'], accident)
+    addSeverityToDate(hour_entry['severities'],accident)
+    addStateToDate(hour_entry['state'],accident)
+    return map
 
 def uptadeAccidentInDate(map,accident):
     date = accident['Start_Time']
@@ -121,38 +128,38 @@ def addStateToDate(dateEntry,accident):
     lt.addLast(state_entry['listByState'],accident)
     return dateEntry
 
+def newHourEntry():
+ 
+    entry = {'severities': None, 'accidents': None, 'state':None}
+    entry['severities'] = m.newMap(numelements=15, maptype='PROBING', comparefunction=compareSeverities)
+    entry['state'] = m.newMap(numelements=15, maptype='PROBING',comparefunction=comparestates)
+    entry['accidents'] = lt.newList('SINGLE_LINKED', compareDates)
+    return entry
+
 def newDateEntry():
  
-    entry = {'severities': None, 'accidents': None, 'categories': None, 'state':None}
+    entry = {'severities': None, 'accidents': None, 'state':None}
     entry['severities'] = m.newMap(numelements=15,
                                      maptype='PROBING',
                                      comparefunction=compareSeverities)
-    entry['categories'] = m.newMap(numelements=15, maptype='PROBING',comparefunction=comparecategories)
    
     entry['state'] = m.newMap(numelements=15, maptype='PROBING',comparefunction=comparestates)
 
     entry['accidents'] = lt.newList('SINGLE_LINKED', compareDates)
     return entry
 
-def newCategory(accident):
-  
-    category_entry = {'category': None, 'listByCategory': None}
-    category_entry['category'] = accident['']
-    category_entry['listByCategory'] = lt.newList('SINGLE_LINKED', comparecategories)
-    return category_entry
-
 def newState(accident):
   
     state_entry = {'state': None, 'listByState': None}
     state_entry['state'] = accident['State']
-    state_entry['listByState'] = lt.newList('SINGLE_LINKED', comparestates)
+    state_entry['listByState'] = lt.newList('SINGLE_LINKED', comparestatesl)
     return state_entry
 
 def newSeverityEntry(accident):
   
     severity_entry = {'severity': None, 'listBySeverity': None}
     severity_entry['severity'] = accident['Severity']
-    severity_entry['listBySeverity'] = lt.newList('SINGLE_LINKED', compareSeverities)
+    severity_entry['listBySeverity'] = lt.newList('SINGLE_LINKED', compareSeveritiesl)
     return severity_entry
 # ==============================
 # Funciones de consulta
@@ -231,9 +238,46 @@ def getAccidentsState(analyzer, dayin, dayend):
                 diaMayor=info1
     print("accidentes totales: "+str(cuantos)+", el estado con mayor accidentes es : "+str(diaMayor))
 
-def getAccidentsCategory(analyzer, dayin, dayend):
+def getAccidentsHour(analyzer, dayin, dayend):
     
-    aDate = om.keys(analyzer['date'],dayin,dayend)
+    aDate = om.keys(analyzer['hour'],dayin,dayend)
+    iterator= it.newIterator(aDate)
+    sev = m.newMap(numelements=15, maptype='PROBING', comparefunction=compareSeverities)
+    cuantos=0
+    while (it.hasNext(iterator)):
+        info= it.next(iterator)
+        valor = om.get(analyzer['hour'],info)['value']
+        cuantos += lt.size(valor['accidents'])
+        llaves = m.keySet(valor['severities'])
+        iterator1= it.newIterator(llaves)
+        while(it.hasNext(iterator1)):
+            info1= it.next(iterator1)
+            val = m.get(valor['severities'], info1)['value']['listBySeverity']
+            entry = m.get(sev, info1)
+            if(entry is None):
+                dic={'severity': info1, 'cuantos':lt.size(val)}
+                m.put(sev,info1,dic)
+            else:
+                entry['value']['cuantos']+=lt.size(val)
+    
+    data=" "
+    cuan=0
+    keys= m.keySet(sev)
+    ite=it.newIterator(keys)
+    while(it.hasNext(ite)):
+        inf=it.next(ite)
+        value = m.get(sev,inf)['value']['cuantos']
+        if(value>cuan):
+            cuan= value
+            data= inf
+
+            
+    print("accidentes totales: "+str(cuantos)+", la severidad con mayor \n accidentes es : "+str(data)+ "con : "+str(cuan)+" accidentes.")
+
+def getAccidentsCategory(analyzer, hourin, hourend):
+
+    
+    aDate = om.keys(analyzer['date'],hourin,hourend)
     iterator= it.newIterator(aDate)
     cuantos=0
     diaMayor=None
@@ -243,13 +287,57 @@ def getAccidentsCategory(analyzer, dayin, dayend):
         info= it.next(iterator)
         valor = om.get(analyzer['date'],info)['value']
         cuantos += lt.size(valor['accidents'])
-        if(lt.size(valor['accidents'])>cuantosMayor):
-            cuantosMayor=lt.size(valor['accidents'])
-            diaMayor=info
-    print("accidentes totales: "+str(cuantos)+", la fecha con mayor accidentes es : "+str(diaMayor))
+        llaves = m.keySet(valor['severities'])
+        iterator1= it.newIterator(llaves)
+        while(it.hasNext(iterator1)):
+            info1= it.next(iterator1)
+            val = m.get(valor['severities'], info1)['value']['listBySeverity']
+            if(lt.size(val)>cuantosMayor):
+                cuantosMayor=lt.size(val)
+                diaMayor=info1
+    print("accidentes totales: "+str(cuantos)+", la severidad con mayor accidentes es : "+str(diaMayor))
+
+def getRadius(analyzer, lat1, lon1, rad):
+    """
+    sacarle accidente por acc 
+    """
+    iterador= it.newIterator(analyzer['accidents'])
+    radius = rad # in miles
+    cuantos=0
+    while(it.hasNext(iterador)):
+        info = it.next(iterador)
+        lat2 = info['value']['Start_Lat']
+        lon2 = info['value']['Start_Lng']
+        a = haversine(lon1, lat1, lon2, lat2)
+        if a <= radius:
+            cuantos += 1 
+    print("los accidentes en ese radio fueron : "+ cuantos)
+
+
+         
+        
 # ==============================
 # Funciones de Comparacion
 # ==============================
+
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees)
+    formula tomada de https://stackoverflow.com/questions/42686300/how-to-check-if-coordinate-inside-certain-area-python
+    """
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 3956 # Radius of earth in miles. Use 3956 for miles
+    return c * r
+
+
 def compareIds(id1, id2):
     """
     Compara dos crimenes
@@ -271,14 +359,14 @@ def compareDates(date1, date2):
         return -1
 
 def compareSeverities(Sev1, Sev2):
-    if (Sev1 == Sev2):
+    if (Sev1 == Sev2['key']):
         return 0
-    elif (Sev1 > Sev2) :
+    elif (Sev1 > Sev2['key']) :
         return 1
     else:
         return -1
 
-def comparecategories(cat1, cat2):
+def compareSeveritiesl(cat1, cat2):
     if (cat1 == cat2):
         return 0
     elif (cat1 > cat2):
@@ -287,9 +375,25 @@ def comparecategories(cat1, cat2):
         return -1
 
 def comparestates(state1, state2):
+    if (state1 == state2['key']):
+        return 0
+    elif (state1 > state2['key']) :
+        return 1
+    else:
+        return -1
+
+def comparestatesl(state1, state2):
     if (state1 == state2):
         return 0
     elif (state1 > state2) :
+        return 1
+    else:
+        return -1
+
+def compareHours(hour1, hour2):
+    if (hour1 == hour2):
+        return 0
+    elif (hour1 > hour2) :
         return 1
     else:
         return -1
