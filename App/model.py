@@ -303,11 +303,7 @@ def getRadius(analyzer, lat1, lon1, rad):
     """
     sacarle accidente por acc 
     """
-    formato = {'llave':0, 'dia':" nada", 'veces':0}
     lista=lt.newList()
-    for i in range(7):
-        lt.addFirst(lista, formato)
-
     actualizar(lista)
     iterador= it.newIterator(analyzer['accidents'])
     radius = rad # in miles
@@ -335,30 +331,32 @@ def getRadius(analyzer, lat1, lon1, rad):
     print("los accidentes en ese radio fueron : "+ str(cuantos)+" , el dia de la semana con mayor \n accidentes en ese radio es: "+ str(mayor)+", con: "+ str(veces))
 
 def actualizar(lista):
+    formato0 = {'llave':0, 'dia':"domingo", 'veces':0}
+    formato1 = {'llave':1, 'dia':"lunes", 'veces':0}
+    formato2 = {'llave':2, 'dia':"martes", 'veces':0}
+    formato3 = {'llave':3, 'dia':"miercoles", 'veces':0}
+    formato4 = {'llave':4, 'dia':"jueves", 'veces':0}
+    formato5 = {'llave':5, 'dia':"viernes", 'veces':0}
+    formato6 = {'llave':6, 'dia':"sabado", 'veces':0}
     for i in range (7):
-        elemento= lt.getElement(lista, i)
         if(i==0):
-            elemento['llave']=i
-            elemento['dia']="domingo"
+            lt.addLast(lista, formato0)
         elif(i==1):
-            elemento['llave']=i
-            elemento['dia']="lunes"
+            lt.addLast(lista, formato1)
         elif(i==2):
-            elemento['llave']=i
-            elemento['dia']="martes"
+            lt.addLast(lista, formato2)
         elif(i==3):
-            elemento['llave']=i
-            elemento['dia']="miercoles"
+            lt.addLast(lista, formato3)
         elif(i==4):
-            elemento['llave']=i
-            elemento['dia']="jueves"
+            lt.addLast(lista, formato4)
         elif(i==5):
-            elemento['llave']=i
-            elemento['dia']="viernes"
+            lt.addLast(lista, formato5)
         elif(i==6):
-            elemento['llave']=i
-            elemento['dia']="sabado"
-        
+            lt.addLast(lista, formato6)
+
+    print(lt.getElement(lista,0))  
+    print(lt.getElement(lista,5))  
+    print(lt.getElement(lista,3))  
 # ==============================
 # Funciones de Comparacion
 # ==============================
