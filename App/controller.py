@@ -122,3 +122,6 @@ def getAccidentsHour(analyzer, dayin, dayend):
     diain = datetime.datetime.strptime(dayin, '%H:%M')
     diaend = datetime.datetime.strptime(dayend, '%H:%M')
     model.getAccidentsHour(analyzer, str(diain.time()),str(diaend.time()))
+
+def getradius(analyzer, lng, ltd, radius):
+    model.getRadius(analyzer,float(ltd),float(lng), float(radius))

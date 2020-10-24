@@ -27,6 +27,7 @@ from DISClib.ADT import map as m
 from DISClib.DataStructures import listiterator as it
 from math import radians, cos, sin, asin, sqrt
 import datetime
+import calendar
 assert config
 
 """
@@ -38,7 +39,7 @@ es decir contiene los modelos con los datos en memoria
 def newAnalyzer():
     analyzer = { 'accidents': None,
                 'date' : None,
-                'hour', None
+                'hour': None
                 }
     analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
 
@@ -306,11 +307,15 @@ def getRadius(analyzer, lat1, lon1, rad):
     cuantos=0
     while(it.hasNext(iterador)):
         info = it.next(iterador)
-        lat2 = info['value']['Start_Lat']
-        lon2 = info['value']['Start_Lng']
-        a = haversine(lon1, lat1, lon2, lat2)
+        lat2 = info['Start_Lat']
+        lon2 = info['Start_Lng']
+        date = info['Start_Time']
+        accidentDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+        a = haversine(lon1, lat1, float(lon2), float(lat2))
         if a <= radius:
             cuantos += 1 
+            dia= calendar.day_name(accidentDate.date())
+            print (dia)
     print("los accidentes en ese radio fueron : "+ cuantos)
 
 

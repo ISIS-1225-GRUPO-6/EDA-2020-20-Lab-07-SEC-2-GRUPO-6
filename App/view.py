@@ -56,6 +56,7 @@ def printMenu():
     print("5- Requerimento 3")
     print("6- Requerimento 4")
     print("7- Requerimento 5")
+    print("8- Requerimento 8")
     print("0- Salir")
     print("*******************************************")
 
@@ -112,6 +113,13 @@ while True:
         LaDate = input("Hora inicio (hh:mm): ")
         LaDate1 = input("Hora final (hh:mm): ")
         controller.getAccidentsHour( cont , LaDate, LaDate1)
+
+    elif int(inputs[0]) == 8:
+        print("\nBono 1 del reto 3: ")
+        lat = input("latitud: ")
+        lon = input("longitud: ")
+        rad = input("radio en millas: ")
+        controller.getradius(cont, lon,lat,rad)
 
     else:
         sys.exit(0)
