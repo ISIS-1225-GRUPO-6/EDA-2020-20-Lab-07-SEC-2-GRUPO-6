@@ -27,6 +27,7 @@ from DISClib.ADT import map as m
 from DISClib.DataStructures import listiterator as it
 from math import radians, cos, sin, asin, sqrt
 import datetime
+from datetime import date
 import calendar
 assert config
 
@@ -302,6 +303,12 @@ def getRadius(analyzer, lat1, lon1, rad):
     """
     sacarle accidente por acc 
     """
+    formato = {'llave':0, 'dia':" nada", 'veces':0}
+    lista=lt.newList()
+    for i in range(7):
+        lt.addFirst(lista, formato)
+
+    actualizar(lista)
     iterador= it.newIterator(analyzer['accidents'])
     radius = rad # in miles
     cuantos=0
@@ -314,12 +321,43 @@ def getRadius(analyzer, lat1, lon1, rad):
         a = haversine(lon1, lat1, float(lon2), float(lat2))
         if a <= radius:
             cuantos += 1 
-            dia= calendar.day_name(accidentDate.date())
-            print (dia)
-    print("los accidentes en ese radio fueron : "+ cuantos)
+            dia= accidentDate.date().weekday()
+            camb=lt.getElement(lista, dia)
+            camb['veces']+=1
+    veces=0
+    mayor=''
+    for i in range(7):
+        el=lt.getElement(lista, i)
+        if(el['veces']> veces):
+            veces = el['veces']
+            mayor = el['dia']
 
+    print("los accidentes en ese radio fueron : "+ str(cuantos)+" , el dia de la semana con mayor \n accidentes en ese radio es: "+ str(mayor)+", con: "+ str(veces))
 
-         
+def actualizar(lista):
+    for i in range (7):
+        elemento= lt.getElement(lista, i)
+        if(i==0):
+            elemento['llave']=i
+            elemento['dia']="domingo"
+        elif(i==1):
+            elemento['llave']=i
+            elemento['dia']="lunes"
+        elif(i==2):
+            elemento['llave']=i
+            elemento['dia']="martes"
+        elif(i==3):
+            elemento['llave']=i
+            elemento['dia']="miercoles"
+        elif(i==4):
+            elemento['llave']=i
+            elemento['dia']="jueves"
+        elif(i==5):
+            elemento['llave']=i
+            elemento['dia']="viernes"
+        elif(i==6):
+            elemento['llave']=i
+            elemento['dia']="sabado"
         
 # ==============================
 # Funciones de Comparacion
