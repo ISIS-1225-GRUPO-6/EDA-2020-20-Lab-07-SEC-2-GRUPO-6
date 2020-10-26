@@ -39,6 +39,10 @@ operación seleccionada.
 
 
 accidentsfile = 'us_accidents_small.csv'
+accidentsfile1 = 'us_accidents_dis_2016.csv'
+accidentsfile2 = 'us_accidents_dis_2017.csv'
+accidentsfile3 = 'us_accidents_dis_2018.csv'
+accidentsfile4 = 'us_accidents_dis_2019.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -77,7 +81,10 @@ while True:
     elif int(inputs[0]) == 2:
         print("\nCargando información de accidentes ....")
         t1_start = process_time() #tiempo inicial
-        controller.loadData(cont,accidentsfile)
+        controller.loadData(cont,accidentsfile1)
+        controller.loadData(cont,accidentsfile2)
+        controller.loadData(cont,accidentsfile3)
+        controller.loadData(cont,accidentsfile4)
         t1_stop = process_time() #tiempo final
         print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
         print('Accidentes cargados: ' + str(controller.accisSize(cont)))
