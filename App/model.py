@@ -187,7 +187,7 @@ def getAccidentsByDate(analyzer, day):
     Para una fecha determinada, retorna el numero de accidentes
     por severidad.
     """
-    aDate = om.get(analyzer[str(day.year)], day)
+    aDate = om.get(analyzer['date'], day)
     if aDate['key'] is not None:
         Accismap = me.getValue(aDate)['severities']
         sev=m.keySet(Accismap)
