@@ -238,7 +238,7 @@ def getAccidentsState(analyzer, dayin, dayend):
             if(lt.size(val)>cuantosMayor):
                 cuantosMayor=lt.size(val)
                 diaMayor=info1
-    print("accidentes totales: "+str(cuantos)+", el estado con mayor accidentes es : "+str(diaMayor))
+    print("accidentes totales: "+str(cuantos)+", el estado con mayor accidentes es : "+str(diaMayor)+" con : " +str(cuantosMayor))
 
 def getAccidentsHour(analyzer, dayin, dayend):
     
@@ -318,7 +318,7 @@ def getRadius(analyzer, lat1, lon1, rad):
         if a <= radius:
             cuantos += 1 
             dia= accidentDate.date().weekday()
-            camb=lt.getElement(lista, dia)
+            camb = lt.getElement(lista, dia)
             camb['veces']+=1
     veces=0
     mayor=''

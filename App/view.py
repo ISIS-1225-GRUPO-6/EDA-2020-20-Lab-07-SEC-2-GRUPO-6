@@ -81,10 +81,7 @@ while True:
     elif int(inputs[0]) == 2:
         print("\nCargando información de accidentes ....")
         t1_start = process_time() #tiempo inicial
-        controller.loadData(cont,accidentsfile1)
-        controller.loadData(cont,accidentsfile2)
-        controller.loadData(cont,accidentsfile3)
-        controller.loadData(cont,accidentsfile4)
+        controller.loadData(cont,accidentsfile)
         t1_stop = process_time() #tiempo final
         print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
         print('Accidentes cargados: ' + str(controller.accisSize(cont)))
